@@ -1,6 +1,8 @@
 ﻿using LicenseManager.Component.Services;
 using LicenseManager.Component.Stores;
 using LicenseManager.Component.ViewModels;
+using LicenseManager.Domain;
+using LicenseManager.Domain.Models;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
@@ -29,7 +31,10 @@ namespace LicenseManager.WPF.HostBuilder
                         s.GetRequiredService<NavigationStore<MainWindowViewModel>>(), () => new ConvalidateLicenseViewModel()));
 
                 _ = services.AddSingleton((s) => new NavigationService<MainWindowViewModel, ActivationLicenseViewModel>(
-                        s.GetRequiredService<NavigationStore<MainWindowViewModel>>(), () => new ActivationLicenseViewModel()));
+                        s.GetRequiredService<NavigationStore<MainWindowViewModel>>(), () => new ActivationLicenseViewModel(new License() {
+                            Product = ProductType.Station,
+                            Expiration = ExpirationType.Unlimited,
+                            SerialNumber = LicenseKey.SerialNumber })));
             });
 
             return hostBuilder;

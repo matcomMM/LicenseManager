@@ -2,7 +2,6 @@
 using CommunityToolkit.Mvvm.Input;
 using LicenseManager.Domain;
 using LicenseManager.Domain.Models;
-using LicenseManager.Domain.Services;
 using System.Windows;
 
 namespace LicenseManager.Component.ViewModels
@@ -11,13 +10,12 @@ namespace LicenseManager.Component.ViewModels
     {
         private string _licensePath = string.Empty;
 
-        public ConvalidateLicenseViewModel()
-        {
-            licenseVM = new(new License());
-        }
+        public ConvalidateLicenseViewModel() { }
 
         [ObservableProperty]
-        private LicenseViewModel licenseVM;
+        [NotifyCanExecuteChangedFor(nameof(ConvalidateCommand))]
+        [NotifyCanExecuteChangedFor(nameof(SaveLicenseCommand))]
+        private LicenseViewModel? licenseVM;
 
         [RelayCommand]
         private void LoadLicense()
@@ -29,26 +27,46 @@ namespace LicenseManager.Component.ViewModels
             }
         }
 
-        [RelayCommand]
+        [RelayCommand(CanExecute = nameof(CanConvalidate))]
         private void Convalidate()
         {
-            LicenseVM.SerialKey = LicenseKey.GenerateSerialKey(LicenseVM.SerialNumber);
-            OnPropertyChanged(nameof(LicenseVM));
+            if (LicenseVM != null)
+            {
+                LicenseVM.SerialKey = LicenseKey.GenerateSerialKey(LicenseVM.SerialNumber, LicenseVM.Product);
+            }
         }
 
-        [RelayCommand]
+        private bool CanConvalidate()
+        {
+            return LicenseVM != null;
+        }
+
+        [RelayCommand(CanExecute = nameof(CanSave))]
         private void SaveLicense()
         {
-            bool saved = LicenseFunction.SaveLicenseFile(LicenseVM.License, _licensePath);
+            if (LicenseVM != null)
+            {
+                string error = string.Empty;
 
-            if (saved)
-            {
-                MessageBox.Show("License saved, send back to customer the file", "License convalidated", MessageBoxButton.OK, MessageBoxImage.Information);
+                bool saved = LicenseFunction.SaveLicenseFile(LicenseVM.License, out error);
+
+                if (saved)
+                {
+                    MessageBox.Show("License saved, send back to customer the file", "License convalidated", MessageBoxButton.OK, MessageBoxImage.Information);
+                }
+                else
+                {
+                    if (!string.IsNullOrEmpty(error))
+                    {
+                        _ = MessageBox.Show($"License is NOT convalidate, retry\n\n{error}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    }
+                }
             }
-            else
-            {
-                MessageBox.Show("License is NOT convalidate, retry", "License NOT convalidated", MessageBoxButton.OK, MessageBoxImage.Error);
-            }
+        }
+
+        private bool CanSave()
+        {
+            return LicenseVM != null;
         }
     }
 }

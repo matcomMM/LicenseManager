@@ -25,8 +25,8 @@ namespace LicenseManager.WPF
         {
             _host.Start();
 
-            NavigationService<MainWindowViewModel, ActivationLicenseViewModel> navigationService =
-                _host.Services.GetRequiredService<NavigationService<MainWindowViewModel, ActivationLicenseViewModel>>();
+            NavigationService<MainWindowViewModel, ConvalidateLicenseViewModel> navigationService =
+                _host.Services.GetRequiredService<NavigationService<MainWindowViewModel, ConvalidateLicenseViewModel>>();
             navigationService.Navigate();
 
             MainWindow = _host.Services.GetRequiredService<MainWindow>();

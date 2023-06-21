@@ -5,8 +5,14 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:local="clr-namespace:LicenseManager.Component.Views"
              xmlns:vms="clr-namespace:LicenseManager.Component.ViewModels"
+             xmlns:obj="clr-namespace:LicenseManager.Component.Object"
+             xmlns:converters="clr-namespace:LicenseManager.Utility.Converters;assembly=LicenseManager.Utility"
              d:DataContext="{d:DesignInstance Type=vms:ActivationLicenseViewModel}"
              mc:Ignorable="d">
+
+    <UserControl.Resources>
+        <converters:BoolToVisibilityConverter x:Key="BoolToVisibility" />
+    </UserControl.Resources>
 
     <Grid Grid.IsSharedSizeScope="True">
         <Grid.RowDefinitions>
@@ -27,10 +33,11 @@
             <Separator Margin="0 0 0 5" />
         </StackPanel>
         <!--#endregion-->
-        
+
         <Grid Grid.Row="1"
               Margin="0 0 0 5">
             <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
@@ -94,8 +101,26 @@
                          Text="{Binding LicenseVM.Email}" />
             </Grid>
             <!--#endregion-->
-            <!--#region Product -->
+            <!--#region SerialNumber -->
             <Grid Grid.Row="3"
+                  Margin="0 0 0 5">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"
+                                      SharedSizeGroup="FirstColumn" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <TextBlock Grid.Column="0"
+                           Margin="0 0 5 0"
+                           Text="Serial Number:"
+                           FontWeight="Bold" />
+                <obj:BindablePasswordBox Grid.Column="1"
+                                         IsEnabled="False"
+                                         HorizontalAlignment="Stretch"
+                                         Password="{Binding LicenseVM.SerialNumber, Mode=OneWay}" />
+            </Grid>
+            <!--#endregion-->
+            <!--#region Product -->
+            <Grid Grid.Row="4"
                   Margin="0 0 0 5">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto"
@@ -113,7 +138,7 @@
             </Grid>
             <!--#endregion-->
             <!--#region Feature -->
-            <!--<Grid Grid.Row="4"
+            <!--<Grid Grid.Row="5"
                   Margin="0 0 0 5">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto"
@@ -145,7 +170,7 @@
             </Grid>-->
             <!--#endregion-->
             <!--#region Button -->
-            <Grid Grid.Row="5"
+            <Grid Grid.Row="6"
                   Margin="0 0 0 5">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto"
@@ -158,19 +183,15 @@
                         <ColumnDefinition Width="*" />
                         <ColumnDefinition Width="*" />
                     </Grid.ColumnDefinitions>
-                    <Button Grid.Column="0"
-                            Margin="0 0 5 0"
+                    <Button Grid.Column="1"
                             Content="Export..."
                             Command="{Binding ExportCommand}" />
-                    <Button Grid.Column="1"
-                            Content="Import..."
-                            Command="{Binding ImportCommand}" />
                 </Grid>
             </Grid>
             <!--#endregion-->
-            
-            <Separator Grid.Row="7"/>
-            
+
+            <Separator Grid.Row="8" />
+
         </Grid>
 
         <Grid Grid.Row="2">
@@ -179,7 +200,7 @@
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
-            
+
             <!--#region Description -->
             <TextBlock Grid.Row="0"
                        Margin="0 0 0 5"
@@ -198,9 +219,20 @@
                            Margin="0 0 5 0"
                            Text="Serial Key:"
                            FontWeight="Bold" />
-                <TextBox Grid.Column="1"
-                         HorizontalAlignment="Stretch"
-                         Text="{Binding LicenseVM.SerialKey}" />
+                <Border Grid.Column="1"
+                        BorderThickness="1"
+                        BorderBrush="Gray"
+                        Padding="3 0 0 0">
+                    <TextBlock HorizontalAlignment="Stretch"
+                               Foreground="Gray"
+                               Text="{Binding LicenseVM.SerialKey, Mode=OneWay}">
+                        <TextBlock.ToolTip>
+                            <ToolTip Visibility="{Binding HasError, Converter={StaticResource BoolToVisibility}, ConverterParameter=True}">
+                                <TextBlock Text="{Binding Error}" />
+                            </ToolTip>
+                        </TextBlock.ToolTip>
+                    </TextBlock>
+                </Border>
             </Grid>
             <!--#endregion-->
             <!--#region Button -->
@@ -217,12 +249,17 @@
                         <ColumnDefinition Width="*" />
                         <ColumnDefinition Width="*" />
                     </Grid.ColumnDefinitions>
+                    <Button Grid.Column="0"
+                            Margin="0 0 5 0"
+                            Content="Import..."
+                            Command="{Binding ImportCommand}" />
                     <Button Grid.Column="1"
-                            Content="Activate License" />
+                            Content="Activate License"
+                            Command="{Binding ActivateCommand}" />
                 </Grid>
             </Grid>
             <!--#endregion-->
-            
+
         </Grid>
 
     </Grid>

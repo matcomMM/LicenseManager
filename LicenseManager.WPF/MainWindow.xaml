@@ -11,9 +11,9 @@
         WindowStartupLocation="CenterScreen"
         Title="License Manager"
         MinHeight="450"
-        MinWidth="450"
+        MinWidth="500"
         Height="500"
-        Width="450">
+        Width="550">
 
     <Grid Margin="10">
         <Grid.RowDefinitions>
@@ -38,17 +38,16 @@
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
 
             <Button Grid.Column="0"
-                    Content="Activate"
-                    Style="{Binding ActivationStyle}"
-                    Command="{Binding GoToActivationCommand}" />
-            <Button Grid.Column="1"
                     Content="Convalidate"
                     Style="{Binding ConvalidateStyle}"
                     Command="{Binding GoToConvalidateCommand}" />
+            <Button Grid.Column="1"
+                    Content="Activate"
+                    Style="{Binding ActivationStyle}"
+                    Command="{Binding GoToActivationCommand}" />
         </Grid>
 
         <Separator Grid.Row="1" />

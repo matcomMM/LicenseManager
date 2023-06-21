@@ -4,6 +4,7 @@ using System;
 using System.IO;
 using System.Text.Json;
 using System.Windows;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace LicenseManager.Domain
 {
@@ -13,7 +14,7 @@ namespace LicenseManager.Domain
         {
             if (license != null)
             {
-                if (LicenseKey.LocalSerialKey == license.SerialKey)
+                if (LicenseKey.LocalSerialKey(license.Product) == license.SerialKey)
                 {
                     return true;
                 }
@@ -53,8 +54,10 @@ namespace LicenseManager.Domain
             }
         }
 
-        public static bool SaveLicenseFile(License license, string licensePath = "")
+        public static bool SaveLicenseFile(License license, out string error, string licensePath = "")
         {
+            error = "";
+            
             try
             {
                 if (string.IsNullOrEmpty(licensePath))
@@ -82,8 +85,9 @@ namespace LicenseManager.Domain
 
                 return true;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                error = ex.Message;
                 return false;
             }
         }

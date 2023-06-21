@@ -1,9 +1,11 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using LicenseManager.Domain.Models;
+using System;
+using System.ComponentModel.DataAnnotations;
 
 namespace LicenseManager.Component.ViewModels
 {
-    public class LicenseViewModel : ObservableObject
+    public class LicenseViewModel : ObservableValidator
     {
 
         public LicenseViewModel(License license)
@@ -13,6 +15,19 @@ namespace LicenseManager.Component.ViewModels
 
         public License License { get; }
 
+        public Guid Id
+        {
+            get => License.Id;
+            set
+            {
+                License.Id = value;
+                OnPropertyChanged();
+                ValidateProperty(Id, nameof(Id));
+            }
+        }
+
+        [Required]
+        [MinLength(3)]
         public string Company
         {
             get => License.Company;
@@ -20,9 +35,12 @@ namespace LicenseManager.Component.ViewModels
             {
                 License.Company = value;
                 OnPropertyChanged();
+                ValidateProperty(Company, nameof(Company));
             }
         }
 
+        [Required]
+        [MinLength(3)]
         public string Machine
         {
             get => License.Machine;
@@ -30,9 +48,12 @@ namespace LicenseManager.Component.ViewModels
             {
                 License.Machine = value;
                 OnPropertyChanged();
+                ValidateProperty(Machine, nameof(Machine));
             }
         }
 
+        [Required]
+        [EmailAddress]
         public string Email
         {
             get => License.Email;
@@ -40,6 +61,7 @@ namespace LicenseManager.Component.ViewModels
             {
                 License.Email = value;
                 OnPropertyChanged();
+                ValidateProperty(Email, nameof(Email));
             }
         }
 
@@ -96,5 +118,11 @@ namespace LicenseManager.Component.ViewModels
             }
         }
 
+        public bool Validate()
+        {
+            ValidateAllProperties();
+
+            return !HasErrors;
+        }
     }
 }

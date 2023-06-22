@@ -72,11 +72,8 @@ namespace LicenseManager.Component.ViewModels
             {
                 License.Product = value;
                 OnPropertyChanged();
-                //OnPropertyChanged(nameof(ProductName));
             }
         }
-
-        //public string ProductName => Product.GetDescription();
 
         public ExpirationType Expiration
         {

@@ -26,7 +26,8 @@ namespace LicenseManager.Component.ViewModels
         [RelayCommand]
         private void Import()
         {
-            License? license = LicenseFunction.OpenLicenseFromFile(out _);
+            License? license = LicenseFunction.OpenLicenseFromFile(out _, out string _error);
+
             if (license != null)
             {
                 LicenseVM = new(license);
@@ -39,6 +40,10 @@ namespace LicenseManager.Component.ViewModels
                 {
                     Error = "Wrong Serial Key";
                 }
+            }
+            else
+            {
+                Error = _error;
             }
         }
 
@@ -71,20 +76,22 @@ namespace LicenseManager.Component.ViewModels
             return LicenseVM.Validate();
         }
 
+        public event Action? OnActivation;
+
         [RelayCommand(CanExecute = nameof(CanActivate))]
         private void Activate()
         {
-            string error = string.Empty;
-
-            if (LicenseFunction.SaveLicenseFile(LicenseVM.License, out error, @$"{AppDomain.CurrentDomain.BaseDirectory}\License.lic"))
+            if (LicenseFunction.SaveLicenseFile(LicenseVM.License, out string _error, @$"{AppDomain.CurrentDomain.BaseDirectory}\License.lic"))
             {
                 _ = MessageBox.Show("License Activated", "License", MessageBoxButton.OK, MessageBoxImage.Information);
+
+                OnActivation?.Invoke();
             }
             else
             {
-                if (!string.IsNullOrEmpty(error))
+                if (!string.IsNullOrEmpty(_error))
                 {
-                    _ = MessageBox.Show($"License Error\n\n{error}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    _ = MessageBox.Show($"License Error\n\n{_error}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
             }
         }

@@ -26,6 +26,8 @@ namespace LicenseManager.WPF
         [ObservableProperty]
         private NavigationStore<MainWindowViewModel> navigationStore;
 
+        public bool EnableConvalidate { get; set; } = true;
+
         public Style ConvalidateStyle => SelectStyle<ConvalidateLicenseViewModel>();
 
         [RelayCommand]
@@ -36,6 +38,9 @@ namespace LicenseManager.WPF
             OnPropertyChanged(nameof(ConvalidateStyle));
             OnPropertyChanged(nameof(ActivationStyle));
         }
+
+        public bool EnableActivation { get; set; } = false;
+
         public Style ActivationStyle => SelectStyle<ActivationLicenseViewModel>();
 
         [RelayCommand]

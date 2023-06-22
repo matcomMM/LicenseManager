@@ -17,13 +17,24 @@ namespace LicenseManager.Component.ViewModels
         [NotifyCanExecuteChangedFor(nameof(SaveLicenseCommand))]
         private LicenseViewModel? licenseVM;
 
+        [ObservableProperty]
+        [NotifyPropertyChangedFor(nameof(HasError))]
+        private string error = string.Empty;
+
+        public bool HasError => !string.IsNullOrEmpty(Error);
+
         [RelayCommand]
         private void LoadLicense()
         {
-            License? license = LicenseFunction.OpenLicenseFromFile(out _licensePath);
+            License? license = LicenseFunction.OpenLicenseFromFile(out _licensePath, out string _error);
+
             if (license != null)
             {
                 LicenseVM = new(license);
+            }
+            else
+            {
+                Error = _error;
             }
         }
 
@@ -46,9 +57,7 @@ namespace LicenseManager.Component.ViewModels
         {
             if (LicenseVM != null)
             {
-                string error = string.Empty;
-
-                bool saved = LicenseFunction.SaveLicenseFile(LicenseVM.License, out error);
+                bool saved = LicenseFunction.SaveLicenseFile(LicenseVM.License, out string _error);
 
                 if (saved)
                 {
@@ -56,9 +65,9 @@ namespace LicenseManager.Component.ViewModels
                 }
                 else
                 {
-                    if (!string.IsNullOrEmpty(error))
+                    if (!string.IsNullOrEmpty(_error))
                     {
-                        _ = MessageBox.Show($"License is NOT convalidate, retry\n\n{error}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                        _ = MessageBox.Show($"License is NOT convalidate, retry\n\n{_error}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                     }
                 }
             }

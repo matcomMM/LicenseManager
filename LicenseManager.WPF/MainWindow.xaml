@@ -6,6 +6,7 @@
         xmlns:local="clr-namespace:LicenseManager.WPF"
         xmlns:componentViews="clr-namespace:LicenseManager.Component.Views;assembly=LicenseManager.Component"
         xmlns:componentViewModels="clr-namespace:LicenseManager.Component.ViewModels;assembly=LicenseManager.Component"
+        xmlns:converters="clr-namespace:LicenseManager.Utility.Converters;assembly=LicenseManager.Utility"
         mc:Ignorable="d"
         d:DataContext="{d:DesignInstance Type=local:MainWindowViewModel}"
         WindowStartupLocation="CenterScreen"
@@ -14,6 +15,10 @@
         MinWidth="500"
         Height="500"
         Width="550">
+
+    <Window.Resources>
+        <converters:BoolToVisibilityConverter x:Key="BoolToVisibility" />
+    </Window.Resources>
 
     <Grid Margin="10">
         <Grid.RowDefinitions>
@@ -42,10 +47,12 @@
 
             <Button Grid.Column="0"
                     Content="Convalidate"
+                    Visibility="{Binding EnableConvalidate, Converter={StaticResource BoolToVisibility}, ConverterParameter=True}"
                     Style="{Binding ConvalidateStyle}"
                     Command="{Binding GoToConvalidateCommand}" />
             <Button Grid.Column="1"
                     Content="Activate"
+                    Visibility="{Binding EnableActivation, Converter={StaticResource BoolToVisibility}, ConverterParameter=True}"
                     Style="{Binding ActivationStyle}"
                     Command="{Binding GoToActivationCommand}" />
         </Grid>

@@ -3,37 +3,51 @@ using Microsoft.Win32;
 using System;
 using System.IO;
 using System.Text.Json;
-using System.Windows;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace LicenseManager.Domain
 {
     public static class LicenseFunction
     {
-        public static bool CheckKey(License license)
+        private static readonly string applicationLicensePath = @$"{AppDomain.CurrentDomain.BaseDirectory}\License.lic";
+
+        public static License? GetApplicationLicense()
         {
-            if (license != null)
+            if (File.Exists(applicationLicensePath))
             {
-                if (LicenseKey.LocalSerialKey(license.Product) == license.SerialKey)
+                try
                 {
-                    return true;
+                    return JsonSerializer.Deserialize<License>(File.ReadAllText(applicationLicensePath));
                 }
-                else
+                catch (Exception)
                 {
-                    _ = MessageBox.Show("Wrong SerialKey", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-                    return false;
+                    return null;
                 }
             }
             else
             {
-                _ = MessageBox.Show("License Error", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                return null;
+            }
+        }
+
+        public static bool CheckKey(License license, out string error)
+        {
+            error = "";
+
+            if (LicenseKey.LocalSerialKey(license.Product) == license.SerialKey)
+            {
+                return true;
+            }
+            else
+            {
+                error = "Wrong SerialKey";
                 return false;
             }
         }
 
-        public static License? OpenLicenseFromFile(out string licensePath)
+        public static License? OpenLicenseFromFile(out string licensePath, out string error)
         {
             licensePath = "";
+            error = "";
 
             OpenFileDialog ofd = new()
             {
@@ -46,7 +60,15 @@ namespace LicenseManager.Domain
             if (ofd.ShowDialog() == true)
             {
                 licensePath = ofd.FileName;
-                return JsonSerializer.Deserialize<License>(File.ReadAllText(ofd.FileName));
+                try
+                {
+                    return JsonSerializer.Deserialize<License>(File.ReadAllText(ofd.FileName));
+                }
+                catch (Exception)
+                {
+                    error = "Wrong license format";
+                    return null;
+                }
             }
             else
             {
@@ -57,7 +79,7 @@ namespace LicenseManager.Domain
         public static bool SaveLicenseFile(License license, out string error, string licensePath = "")
         {
             error = "";
-            
+
             try
             {
                 if (string.IsNullOrEmpty(licensePath))

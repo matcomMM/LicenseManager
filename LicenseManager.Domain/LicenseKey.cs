@@ -8,14 +8,16 @@ namespace LicenseManager.Domain
 {
     public static class LicenseKey
     {
+        private const string _secretKey = "38ef2819-5ded-446b-9e98-d0f9e277339f";
+
+        public static License? ApplicationLicense => LicenseFunction.GetApplicationLicense();
+
         public static string SerialNumber => GetHostSerialNumber();
 
         public static string LocalSerialKey(ProductType productType)
         { 
             return GenerateSerialKey(SerialNumber, productType); 
         }
-
-        private const string _secretKey = "38ef2819-5ded-446b-9e98-d0f9e277339f";
 
         public static string GenerateSerialKey(string serialNumber, ProductType productType)
         {
